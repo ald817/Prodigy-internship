@@ -1,1 +1,51 @@
+##Develop a packet sniffer tool that captures and analyzes network packets. Display relevant information such as source and destination IP addresses, protocols, and payload data. Ensure the ethical use of the tool for educational purposes
+
+
+Developing a Packet Sniffer is a valuable exercise for understanding network protocols and cybersecurity principles. Below is a Python-based packet sniffer that captures and analyzes network packets, displaying relevant information such as source and destination IP addresses, protocols, and payload data.
+
+Prerequisites
+Install scapy:
+
+#bash
+pip install scapy
+#Ensure you have administrative privileges to capture network packets.
+
+##Python Code: Packet Sniffer
+from scapy.all import sniff, IP, TCP, UDP
+
+def packet_callback(packet):
+    """
+    Callback function to process captured packets.
+    """
+    if IP in packet:
+        ip_src = packet[IP].src
+        ip_dst = packet[IP].dst
+        protocol = "Unknown"
+        
+        # Identify protocols
+        if TCP in packet:
+            protocol = "TCP"
+        elif UDP in packet:
+            protocol = "UDP"
+
+        # Print packet details
+        print(f"Source: {ip_src}, Destination: {ip_dst}, Protocol: {protocol}")
+        
+        # Optional: Print payload if available
+        if packet.haslayer(TCP) or packet.haslayer(UDP):
+            payload = bytes(packet[protocol].payload)
+            print(f"Payload: {payload[:50]}...")  # Display first 50 bytes of the payload
+            print("-" * 50)
+
+# Start sniffing packets
+print("Starting packet sniffing...")
+sniff(filter="ip", prn=packet_callback, store=False)
+
+#### Key Features:
+Packet Capture: Captures only IP packets (can be extended to others).
+Analysis:
+Extracts source and destination IP addresses.
+Identifies protocols (TCP, UDP, or others).
+Displays payload data (truncated for readability).
+Filter Packets: Uses a Berkeley Packet Filter (BPF) to capture only IP-based packets.
 
